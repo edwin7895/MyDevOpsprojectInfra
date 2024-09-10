@@ -23,7 +23,7 @@ pipeline {
     stages {
         stage('Checkout') {
             steps {
-                git branch: 'main', url: 'https://github.com/edwin7895/terraform-ecs-fargate.git'
+                git branch: 'main', url: 'https://github.com/edwin7895/MyDevOpsprojectInfra.git'
             }
         }
 
