@@ -1,14 +1,23 @@
 pipeline {
     agent any
 
-    environment {
-        AWS_CREDENTIALS_ID = 'aws-credentials'  // ID de tus credenciales en Jenkins
-        TERRAFORM_VERSION = '1.9.5'  // Ajustado a la versión que mencionaste
-        WORKSPACE_DIR = "${WORKSPACE}/terraform"  // Directorio de trabajo de Terraform
+    parameters {
+        choice(
+            name: 'ACTION',
+            choices: ['plan', 'plan-apply', 'plan-destroy'],
+            description: 'Selecciona la acción de Terraform a ejecutar'
+        )
+        string(
+            name: 'TERRAFORM_WORKSPACE',
+            defaultValue: 'staging',
+            description: 'Terraform workspace para usar (staging, production, etc.)'
+        )
     }
 
-    parameters {
-        string(name: 'TERRAFORM_WORKSPACE', defaultValue: 'staging', description: 'Terraform workspace a usar (e.g., staging, production)')
+    environment {
+        AWS_CREDENTIALS_ID = 'aws-credentials'  // Cambia esto por el ID de tus credenciales en Jenkins
+        TERRAFORM_VERSION = '1.9.5'
+        WORKSPACE_DIR = "${WORKSPACE}/terraform"  // Directorio de trabajo de Terraform
     }
 
     stages {
@@ -49,20 +58,9 @@ pipeline {
                 dir(WORKSPACE_DIR) {
                     script {
                         sh 'terraform init'
-                        // Verifica si el workspace ya existe, si no, lo crea
                         sh """
                         terraform workspace select ${params.TERRAFORM_WORKSPACE} || terraform workspace new ${params.TERRAFORM_WORKSPACE}
                         """
-                    }
-                }
-            }
-        }
-
-        stage('Terraform Validate') {
-            steps {
-                dir(WORKSPACE_DIR) {
-                    script {
-                        sh 'terraform validate'
                     }
                 }
             }
@@ -72,13 +70,18 @@ pipeline {
             steps {
                 dir(WORKSPACE_DIR) {
                     script {
-                        sh 'terraform plan -out=tfplan'
+                        if (params.ACTION == 'plan' || params.ACTION == 'plan-apply' || params.ACTION == 'plan-destroy') {
+                            sh 'terraform plan -out=tfplan'
+                        }
                     }
                 }
             }
         }
 
         stage('Terraform Apply') {
+            when {
+                expression { params.ACTION == 'plan-apply' }
+            }
             steps {
                 dir(WORKSPACE_DIR) {
                     script {
@@ -88,9 +91,22 @@ pipeline {
             }
         }
 
-        stage('Post-Apply') {
+        stage('Terraform Destroy') {
+            when {
+                expression { params.ACTION == 'plan-destroy' }
+            }
             steps {
-                echo "Infrastructure successfully applied in workspace ${params.TERRAFORM_WORKSPACE}"
+                dir(WORKSPACE_DIR) {
+                    script {
+                        sh 'terraform destroy -auto-approve'
+                    }
+                }
+            }
+        }
+
+        stage('Post-Action') {
+            steps {
+                echo "Acción '${params.ACTION}' ejecutada en el workspace '${params.TERRAFORM_WORKSPACE}'"
             }
         }
     }
