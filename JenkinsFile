@@ -8,7 +8,7 @@ pipeline {
     }
 
     parameters {
-        string(name: 'TERRAFORM_WORKSPACE', defaultValue: 'dev', description: 'Terraform workspace a usar (e.g., stg, prod)')
+        string(name: 'TERRAFORM_WORKSPACE', defaultValue: 'staging', description: 'Terraform workspace a usar (e.g., staging, production)')
     }
 
     stages {
@@ -72,4 +72,35 @@ pipeline {
             steps {
                 dir(WORKSPACE_DIR) {
                     script {
-                        sh 'terraform
+                        sh 'terraform plan -out=tfplan'
+                    }
+                }
+            }
+        }
+
+        stage('Terraform Apply') {
+            steps {
+                dir(WORKSPACE_DIR) {
+                    script {
+                        sh 'terraform apply -auto-approve tfplan'
+                    }
+                }
+            }
+        }
+
+        stage('Post-Apply') {
+            steps {
+                echo "Infrastructure successfully applied in workspace ${params.TERRAFORM_WORKSPACE}"
+            }
+        }
+    }
+
+    post {
+        always {
+            cleanWs()  // Limpia el workspace después de la ejecución del pipeline
+        }
+        failure {
+            echo 'Pipeline failed. Check the logs.'
+        }
+    }
+}
