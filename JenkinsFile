@@ -1,0 +1,75 @@
+pipeline {
+    agent any
+
+    environment {
+        AWS_CREDENTIALS_ID = 'aws-credentials'  // ID de tus credenciales en Jenkins
+        TERRAFORM_VERSION = '1.9.5'  // Ajustado a la versión que mencionaste
+        WORKSPACE_DIR = "${WORKSPACE}/terraform"  // Directorio de trabajo de Terraform
+    }
+
+    parameters {
+        string(name: 'TERRAFORM_WORKSPACE', defaultValue: 'dev', description: 'Terraform workspace a usar (e.g., stg, prod)')
+    }
+
+    stages {
+        stage('Checkout') {
+            steps {
+                git branch: 'main', url: 'https://github.com/edwin7895/terraform-ecs-fargate.git'
+            }
+        }
+
+        stage('Set Up AWS Credentials') {
+            steps {
+                withCredentials([[$class: 'AmazonWebServicesCredentialsBinding', credentialsId: AWS_CREDENTIALS_ID]]) {
+                    sh '''
+                    export AWS_ACCESS_KEY_ID=$AWS_ACCESS_KEY_ID
+                    export AWS_SECRET_ACCESS_KEY=$AWS_SECRET_ACCESS_KEY
+                    '''
+                }
+            }
+        }
+
+        stage('Install Terraform') {
+            steps {
+                script {
+                    sh """
+                    if ! terraform --version | grep ${TERRAFORM_VERSION}; then
+                        curl -O https://releases.hashicorp.com/terraform/${TERRAFORM_VERSION}/terraform_${TERRAFORM_VERSION}_linux_amd64.zip
+                        unzip terraform_${TERRAFORM_VERSION}_linux_amd64.zip
+                        sudo mv terraform /usr/local/bin/
+                    fi
+                    terraform -version
+                    """
+                }
+            }
+        }
+
+        stage('Terraform Init & Workspace Setup') {
+            steps {
+                dir(WORKSPACE_DIR) {
+                    script {
+                        sh 'terraform init'
+                        // Verifica si el workspace ya existe, si no, lo crea
+                        sh """
+                        terraform workspace select ${params.TERRAFORM_WORKSPACE} || terraform workspace new ${params.TERRAFORM_WORKSPACE}
+                        """
+                    }
+                }
+            }
+        }
+
+        stage('Terraform Validate') {
+            steps {
+                dir(WORKSPACE_DIR) {
+                    script {
+                        sh 'terraform validate'
+                    }
+                }
+            }
+        }
+
+        stage('Terraform Plan') {
+            steps {
+                dir(WORKSPACE_DIR) {
+                    script {
+                        sh 'terraform
