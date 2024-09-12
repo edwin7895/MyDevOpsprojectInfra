@@ -40,15 +40,6 @@ pipeline {
         }
 
 
-
-        stage('Verify AWS CLI') {
-            steps {
-                sh 'aws sts get-caller-identity'
-            }
-        }
-        
-
-
         stage('Terraform Init & Workspace Setup') {
             steps {
                 dir(WORKSPACE_DIR) {
