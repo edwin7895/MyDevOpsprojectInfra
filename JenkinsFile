@@ -39,14 +39,20 @@ pipeline {
                 }
             }
         }
-
-
+}
 
         stage('Verify AWS CLI') {
             steps {
                 sh 'aws sts get-caller-identity'
             }
         }
+
+         stage('hello AWS') {
+            steps {
+                withAWS(credentials: 'aws-credentials', region: 'us-east-1') {
+                sh 'aws sts get-caller-identity'
+                }
+            }       
         
 
 
