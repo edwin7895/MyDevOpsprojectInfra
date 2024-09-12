@@ -49,17 +49,22 @@ pipeline {
                         terraform init -reconfigure -backend-config="key=ecs-fargate/${params.TERRAFORM_WORKSPACE}/terraform.tfstate"
                         """
                         
-                        // Verificar y crear el workspace si no existe
-                        def workspaceExists = sh(script: "terraform workspace list | grep ${params.TERRAFORM_WORKSPACE}", returnStatus: true)
+                        // Verificar si el workspace ya existe
+                        def workspaceExists = sh(script: "terraform workspace list | grep -w ${params.TERRAFORM_WORKSPACE}", returnStatus: true)
+                        
+                        // Si no existe, lo creamos, de lo contrario lo seleccionamos
                         if (workspaceExists != 0) {
+                            echo "Workspace ${params.TERRAFORM_WORKSPACE} no existe. Creando nuevo workspace."
                             sh "terraform workspace new ${params.TERRAFORM_WORKSPACE}"
                         } else {
+                            echo "Workspace ${params.TERRAFORM_WORKSPACE} ya existe. Seleccionando workspace."
                             sh "terraform workspace select ${params.TERRAFORM_WORKSPACE}"
                         }
                     }
                 }
             }
         }
+
 
 
 
