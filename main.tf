@@ -21,17 +21,13 @@ module "ecs" {
   subnets            = module.vpc.subnet_ids
   security_group     = module.security_groups.ecs_security_group_id
   target_group_arn   = module.alb.app_tg.arn
+  min_capacity  = 1
+  max_capacity  = 3
 }
 
 module "security_groups" {
   source  = "./modules/security_groups"
   vpc_id  = module.vpc.vpc_id
-}
-
-module "autoscaling" {
-  source        = "./modules/autoscaling"
-  min_capacity  = 1
-  max_capacity  = 3
 }
 
 output "vpc_id" {

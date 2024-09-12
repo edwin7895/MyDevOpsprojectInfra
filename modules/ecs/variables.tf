@@ -18,3 +18,12 @@ variable "security_group" {
 variable "target_group_arn" {
   type = string
 }
+
+variable "min_capacity" {
+  default = 1
+}
+
+variable "max_capacity" {
+  default = 3
+}
+
