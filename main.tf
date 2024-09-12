@@ -20,7 +20,7 @@ module "ecs" {
   execution_role_arn = module.iam.ecs_execution_role_arn
   subnets            = module.vpc.subnet_ids
   security_group     = module.security_groups.ecs_security_group_id
-  target_group_arn   = module.alb.app_tg.arn
+  target_group_arn   = module.alb.app_tg_arn
   min_capacity  = 1
   max_capacity  = 3
 }
