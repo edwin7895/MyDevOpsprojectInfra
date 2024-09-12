@@ -9,7 +9,7 @@ resource "aws_ecs_task_definition" "app_task" {
   cpu                      = "256"
   memory                   = "512"
   execution_role_arn       = var.execution_role_arn
-  container_definitions    = file("container_definitions.json")
+  container_definitions    = file("${path.module}/container_definitions.json")
 }
 
 resource "aws_ecs_service" "app_service" {
