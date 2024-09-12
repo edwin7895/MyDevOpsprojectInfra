@@ -17,7 +17,7 @@ pipeline {
     environment {
         AWS_CREDENTIALS_ID = 'aws-credentials'  // Cambia esto por el ID de tus credenciales en Jenkins
         TERRAFORM_VERSION = '1.9.5'
-        WORKSPACE_DIR = "${WORKSPACE}/terraform"  // Directorio de trabajo de Terraform
+        WORKSPACE_DIR = "${WORKSPACE}"  // Directorio de trabajo de Terraform
     }
 
     stages {
