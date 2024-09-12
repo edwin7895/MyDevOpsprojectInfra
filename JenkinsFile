@@ -38,21 +38,6 @@ pipeline {
             }
         }
 
-        stage('Install Terraform') {
-            steps {
-                script {
-                    sh """
-                    if ! terraform --version | grep ${TERRAFORM_VERSION}; then
-                        curl -O https://releases.hashicorp.com/terraform/${TERRAFORM_VERSION}/terraform_${TERRAFORM_VERSION}_linux_amd64.zip
-                        unzip terraform_${TERRAFORM_VERSION}_linux_amd64.zip
-                        mv terraform /usr/local/bin/
-                    fi
-                    terraform -version
-                    """
-                }
-            }
-        }
-
         stage('Terraform Init & Workspace Setup') {
             steps {
                 dir(WORKSPACE_DIR) {
