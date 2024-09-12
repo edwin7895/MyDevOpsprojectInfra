@@ -45,7 +45,7 @@ pipeline {
                     if ! terraform --version | grep ${TERRAFORM_VERSION}; then
                         curl -O https://releases.hashicorp.com/terraform/${TERRAFORM_VERSION}/terraform_${TERRAFORM_VERSION}_linux_amd64.zip
                         unzip terraform_${TERRAFORM_VERSION}_linux_amd64.zip
-                        sudo mv terraform /usr/local/bin/
+                        mv terraform /usr/local/bin/
                     fi
                     terraform -version
                     """
