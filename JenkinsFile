@@ -39,7 +39,7 @@ pipeline {
                 }
             }
         }
-}
+
 
         stage('Verify AWS CLI') {
             steps {
@@ -117,6 +117,7 @@ pipeline {
             }
         }
     }
+ }   
 
     post {
         always {
