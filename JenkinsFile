@@ -16,7 +16,7 @@ pipeline {
 
     environment {
         AWS_CREDENTIALS_ID = 'aws-credentials'
-        WORKSPACE_DIR = "${WORKSPACE}/terraform/environments/${params.ENVIRONMENT}"  // Directorio del ambiente
+        WORKSPACE_DIR = "${WORKSPACE}/environments/${params.ENVIRONMENT}"  // Directorio del ambiente
     }
 
     stages {
