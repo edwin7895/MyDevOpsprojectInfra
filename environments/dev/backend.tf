@@ -1,4 +1,4 @@
-terraform {
+
   backend "s3" {
     bucket         = "edwinlabterraformstatebucket"
     key            = "ecs-fargate/dev/terraform.tfstate"
@@ -6,4 +6,8 @@ terraform {
     encrypt        = true
     dynamodb_table = "edwinlabterraformdynamo"
   }
-}
+
+
+
+
+
