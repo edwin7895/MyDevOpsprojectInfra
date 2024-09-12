@@ -39,14 +39,14 @@ pipeline {
 
         stage('Terraform Init & Workspace Setup') {
             steps {
-                dir(WORKSPACE_DIR) {
+
                     script {
                         sh """
                         terraform init -backend-config="${WORKSPACE_DIR}/backend.tf"
                         terraform workspace select ${params.ENVIRONMENT} || terraform workspace new ${params.ENVIRONMENT}
                         """
                     }
-                }
+
             }
         }
 
@@ -55,11 +55,11 @@ pipeline {
                 expression { params.ACTION == 'plan' }
             }
             steps {
-                dir(WORKSPACE_DIR) {
+
                     script {
                         sh "terraform plan -var-file=${WORKSPACE_DIR}/${params.ENVIRONMENT}.tfvars"
                     }
-                }
+
             }
         }
 
@@ -68,11 +68,11 @@ pipeline {
                 expression { params.ACTION == 'apply' }
             }
             steps {
-                dir(WORKSPACE_DIR) {
+
                     script {
                         sh "terraform apply -var-file=${WORKSPACE_DIR}/${params.ENVIRONMENT}.tfvars -auto-approve"
                     }
-                }
+
             }
         }
 
@@ -81,11 +81,11 @@ pipeline {
                 expression { params.ACTION == 'destroy' }
             }
             steps {
-                dir(WORKSPACE_DIR) {
+
                     script {
                         sh "terraform destroy -var-file=${WORKSPACE_DIR}/${params.ENVIRONMENT}.tfvars -auto-approve"
                     }
-                }
+            
             }
         }
     }
