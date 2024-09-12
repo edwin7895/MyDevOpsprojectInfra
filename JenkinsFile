@@ -44,14 +44,23 @@ pipeline {
             steps {
                 dir(WORKSPACE_DIR) {
                     script {
+                        // Inicializar Terraform con la configuración del backend
                         sh """
                         terraform init -reconfigure -backend-config="key=ecs-fargate/${params.TERRAFORM_WORKSPACE}/terraform.tfstate"
-                        terraform workspace select ${params.TERRAFORM_WORKSPACE} || terraform workspace new ${params.TERRAFORM_WORKSPACE}
                         """
+                        
+                        // Verificar y crear el workspace si no existe
+                        def workspaceExists = sh(script: "terraform workspace list | grep ${params.TERRAFORM_WORKSPACE}", returnStatus: true)
+                        if (workspaceExists != 0) {
+                            sh "terraform workspace new ${params.TERRAFORM_WORKSPACE}"
+                        } else {
+                            sh "terraform workspace select ${params.TERRAFORM_WORKSPACE}"
+                        }
                     }
                 }
             }
         }
+
 
 
 
