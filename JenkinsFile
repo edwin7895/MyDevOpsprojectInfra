@@ -16,6 +16,8 @@ pipeline {
 
     environment {
         AWS_CREDENTIALS_ID = 'aws-credentials'  // Cambia esto por el ID de tus credenciales en Jenkins
+        AWS_ACCESS_KEY_ID = credentials('aws-access-key-id')  // Cambia esto por tu acceso almacenado en Jenkins
+        AWS_SECRET_ACCESS_KEY = credentials('aws-secret-access-key')  // Cambia esto por tu secreto almacenado en Jenkins
         TERRAFORM_VERSION = '1.9.5'
         WORKSPACE_DIR = "${WORKSPACE}"  // Directorio de trabajo de Terraform
     }
@@ -29,16 +31,14 @@ pipeline {
 
         stage('Set Up AWS Credentials') {
             steps {
-                withCredentials([[$class: 'AmazonWebServicesCredentialsBinding', credentialsId: AWS_CREDENTIALS_ID]]) {
-                    sh '''
-                    echo "AWS_ACCESS_KEY_ID is set"
-                    echo "AWS_SECRET_ACCESS_KEY is set"
-                    export AWS_ACCESS_KEY_ID=$AWS_ACCESS_KEY_ID
-                    export AWS_SECRET_ACCESS_KEY=$AWS_SECRET_ACCESS_KEY
-                    '''
-                }
+                sh '''
+                export AWS_ACCESS_KEY_ID=$AWS_ACCESS_KEY_ID
+                export AWS_SECRET_ACCESS_KEY=$AWS_SECRET_ACCESS_KEY
+                aws sts get-caller-identity
+                '''
             }
         }
+
 
 
         stage('Verify AWS CLI') {
@@ -46,14 +46,7 @@ pipeline {
                 sh 'aws sts get-caller-identity'
             }
         }
-
-         stage('hello AWS') {
-            steps {
-                withAWS(credentials: 'aws-credentials', region: 'us-east-1') {
-                sh 'aws sts get-caller-identity'
-                }
-            }       
-              }  
+        
 
 
         stage('Terraform Init & Workspace Setup') {
@@ -117,7 +110,6 @@ pipeline {
             }
         }
     }
- }   
 
     post {
         always {
