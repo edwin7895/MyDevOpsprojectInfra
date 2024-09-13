@@ -57,7 +57,7 @@ pipeline {
             steps {
                 dir(WORKSPACE_DIR) {
                     script {
-                        sh "terraform plan -var-file=${WORKSPACE_DIR}/${params.ENVIRONMENT}.tfvars"
+                        sh "terraform plan -var-file=${WORKSPACE}/environments/${params.ENVIRONMENT}/${params.ENVIRONMENT}.tfvars"
                     }
                 }
             }
