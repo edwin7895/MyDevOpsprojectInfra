@@ -19,6 +19,7 @@ resource "aws_iam_role_policy_attachment" "ecs_execution_role_policy" {
   policy_arn = "arn:aws:iam::aws:policy/service-role/AmazonECSTaskExecutionRolePolicy"
 }
 
+
 # IAM Role for Auto Scaling in ECS
 resource "aws_iam_role" "ecs_autoscale_role" {
   name = "ecsAutoScalingRole"

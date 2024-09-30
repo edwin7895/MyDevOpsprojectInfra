@@ -28,3 +28,10 @@ resource "aws_ecs_service" "frontend_app_service" {
     container_port   = 5001
   }
 }
+
+resource "aws_cloudwatch_log_group" "ecs_frontend_log_group" {
+  name              = "/ecs/frontend-app"
+  retention_in_days = 7  # Optional: Set the number of days to retain logs
+}
+
+

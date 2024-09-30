@@ -27,3 +27,7 @@ variable "max_capacity" {
   default = 3
 }
 
+variable "region" {
+  default = "us-east-1"
+}
+
