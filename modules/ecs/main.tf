@@ -15,7 +15,7 @@ resource "aws_ecs_task_definition" "frontend_app_task" {
 resource "aws_ecs_service" "frontend_app_service" {
   name            = "frontend-app-service"
   cluster         = aws_ecs_cluster.ecs_cluster.id
-  task_definition = aws_ecs_task_definition.app_task.arn
+  task_definition = aws_ecs_task_definition.frontend_app_task.arn
   desired_count   = 1
   launch_type     = "FARGATE"
   network_configuration {
