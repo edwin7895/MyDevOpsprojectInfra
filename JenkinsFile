@@ -50,23 +50,6 @@ pipeline {
             }
         }
 
-        stage('Verify tfvars file') {
-            steps {
-                dir(WORKSPACE_DIR) {
-                    script {
-                        sh """
-                        if [ -f ${WORKSPACE_DIR}/${params.ENVIRONMENT}.tfvars ]; then
-                            echo "El archivo ${params.ENVIRONMENT}.tfvars existe."
-                        else
-                            echo "ERROR: El archivo ${params.ENVIRONMENT}.tfvars NO existe en ${WORKSPACE_DIR}."
-                            exit 1
-                        fi
-                        """
-                    }
-                }
-            }
-        }
-
 
         stage('Terraform Plan') {
             when {

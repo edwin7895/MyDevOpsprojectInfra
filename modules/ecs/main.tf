@@ -2,8 +2,8 @@ resource "aws_ecs_cluster" "ecs_cluster" {
   name = var.cluster_name
 }
 
-resource "aws_ecs_task_definition" "app_task" {
-  family                   = "app"
+resource "aws_ecs_task_definition" "frontend_app_task" {
+  family                   = "frontend-app"
   network_mode             = "awsvpc"
   requires_compatibilities = ["FARGATE"]
   cpu                      = "256"
@@ -12,7 +12,7 @@ resource "aws_ecs_task_definition" "app_task" {
   container_definitions    = file("${path.module}/container_definitions.json")
 }
 
-resource "aws_ecs_service" "app_service" {
+resource "aws_ecs_service" "frontend_app_service" {
   name            = "app-service"
   cluster         = aws_ecs_cluster.ecs_cluster.id
   task_definition = aws_ecs_task_definition.app_task.arn
@@ -24,7 +24,7 @@ resource "aws_ecs_service" "app_service" {
   }
   load_balancer {
     target_group_arn = var.target_group_arn
-    container_name   = "app"
+    container_name   = "frontend-app"
     container_port   = 80
   }
 }
