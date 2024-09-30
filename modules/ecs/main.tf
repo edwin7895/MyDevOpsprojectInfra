@@ -27,6 +27,7 @@ resource "aws_ecs_service" "frontend_app_service" {
     container_name   = "frontend-app"
     container_port   = 5001
   }
+  depends_on = [ aws_cloudwatch_log_group.ecs_frontend_log_group ]
 }
 
 resource "aws_cloudwatch_log_group" "ecs_frontend_log_group" {
