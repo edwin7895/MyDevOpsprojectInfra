@@ -21,6 +21,7 @@ resource "aws_ecs_service" "frontend_app_service" {
   network_configuration {
     subnets         = var.subnets
     security_groups = [var.security_group]
+    assign_public_ip = true
   }
   load_balancer {
     target_group_arn = var.target_group_arn
