@@ -59,11 +59,11 @@ resource "aws_ecs_service" "backend_app_service" {
     security_groups = [var.security_group]
     assign_public_ip = true
   }
-  load_balancer {
-    target_group_arn = var.target_group_arn
-    container_name   = "backend-app"
-    container_port   = 8080
-  }
+  # load_balancer {
+  #   target_group_arn = var.target_group_arn
+  #   container_name   = "backend-app"
+  #   container_port   = 8080
+  # }
   depends_on = [ aws_cloudwatch_log_group.ecs_backend_log_group ]
 }
 
