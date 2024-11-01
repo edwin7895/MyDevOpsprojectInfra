@@ -67,6 +67,12 @@ resource "aws_lambda_function" "oddo_lambda" {
   handler       = "index.handler"
   runtime       = "nodejs18.x"
 
+  environment {
+    variables = {
+      S3_BUCKET_NAME = var.oddo_artifact_bucket
+    }
+
+  }
   depends_on = [
     aws_iam_role_policy_attachment.oddo_lambda_policy_attachment
   ]
