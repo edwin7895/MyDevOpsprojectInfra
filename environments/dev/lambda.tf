@@ -62,7 +62,7 @@ resource "aws_iam_role_policy_attachment" "oddo_lambda_policy_attachment" {
 resource "aws_lambda_function" "oddo_lambda" {
   function_name = "odoo-opps-qa"
   s3_bucket     = var.oddo_artifact_bucket
-  s3_key        = "odoo-opps.zip"  
+  s3_key        = "ODDO-OPPS.zip"  
   role          = aws_iam_role.oddo_lambda_role.arn
   handler       = "index.handler"
   runtime       = "nodejs18.x"
