@@ -69,7 +69,7 @@ resource "aws_lambda_function" "oddo_lambda" {
 
   environment {
     variables = {
-      S3_BUCKET_NAME = var.oddo_artifact_bucket
+      S3_BUCKET_NAME = var.oddo_s3_bucket_name
     }
 
   }
