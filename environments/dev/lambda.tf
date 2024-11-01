@@ -80,22 +80,14 @@ resource "aws_lambda_function" "oddo_lambda" {
 
 
 # Terraform code to create an EventBridge Scheduler
-resource "aws_cloudwatch_event_rule" "oddo_lambda_schedule" {
+resource "aws_scheduler_schedule" "oddo_lambda_scheduler" {
   name                = "oddo-edwin-schedule"
   schedule_expression = "rate(1 minute)"
-  description         = "Schedule to invoke the odoo-opps-qa Lambda every 1 minute."
-}
-
-resource "aws_cloudwatch_event_target" "oddo_lambda_target" {
-  rule      = aws_cloudwatch_event_rule.oddo_lambda_schedule.name
-  target_id = "oddo-opps-qa-target"
-  arn       = aws_lambda_function.oddo_lambda.arn
-}
-
-resource "aws_lambda_permission" "allow_eventbridge_to_invoke" {
-  statement_id  = "AllowEventBridgeInvocation"
-  action        = "lambda:InvokeFunction"
-  function_name = aws_lambda_function.oddo_lambda.function_name
-  principal     = "events.amazonaws.com"
-  source_arn    = aws_cloudwatch_event_rule.oddo_lambda_schedule.arn
+  flexible_time_window {
+    mode = "OFF"
+  }
+  target {
+    arn      = aws_lambda_function.oddo_lambda.arn
+    role_arn = aws_iam_role.oddo_lambda_role.arn
+  }
 }
